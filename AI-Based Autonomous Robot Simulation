@@ -1,0 +1,119 @@
+"""
+CodeAlpha Internship
+Task 4: Autonomous Robot Simulation
+
+The robot chooses an action based on simulated
+front, left, and right distance sensor readings.
+"""
+
+SAFE_DISTANCE_CM = 20.0
+
+
+def read_distance(sensor_name):
+    while True:
+        try:
+            distance = float(
+                input(
+                    f"Enter {sensor_name} distance in cm: "
+                )
+            )
+
+            if distance < 0:
+                print("Distance cannot be negative.")
+                continue
+
+            return distance
+
+        except ValueError:
+            print("Please enter a valid number.")
+
+
+def decide_action(front, left, right):
+
+    front_clear = front > SAFE_DISTANCE_CM
+    left_clear = left > SAFE_DISTANCE_CM
+    right_clear = right > SAFE_DISTANCE_CM
+
+    if front_clear:
+        return (
+            "MOVE FORWARD",
+            "The front path is clear."
+        )
+
+    elif left_clear and right_clear:
+
+        if left >= right:
+            return (
+                "TURN LEFT",
+                "Left side has more clearance."
+            )
+
+        else:
+            return (
+                "TURN RIGHT",
+                "Right side has more clearance."
+            )
+
+    elif left_clear:
+        return (
+            "TURN LEFT",
+            "Only the left side is clear."
+        )
+
+    elif right_clear:
+        return (
+            "TURN RIGHT",
+            "Only the right side is clear."
+        )
+
+    else:
+        return (
+            "STOP",
+            "All directions are blocked or too close."
+        )
+
+
+def run_robot_simulation():
+
+    print("=" * 50)
+    print(" AUTONOMOUS ROBOT SIMULATION")
+    print(" Obstacle Detection and Avoidance")
+    print(" Safe distance:", SAFE_DISTANCE_CM, "cm")
+    print("=" * 50)
+
+    while True:
+
+        print("\nEnter sensor readings:")
+
+        front = read_distance("FRONT")
+        left = read_distance("LEFT")
+        right = read_distance("RIGHT")
+
+        action, reason = decide_action(
+            front, left, right
+        )
+
+        print("\n--- ROBOT DECISION ---")
+        print(f"Front distance : {front:.1f} cm")
+        print(f"Left distance  : {left:.1f} cm")
+        print(f"Right distance : {right:.1f} cm")
+
+        print("Selected action:", action)
+        print("Reason:", reason)
+
+        again = input(
+            "\nRun another test? (yes/no): "
+        ).strip().lower()
+
+        while again not in ("yes", "y", "no", "n"):
+            again = input(
+                "Please enter yes or no: "
+            ).strip().lower()
+
+        if again in ("no", "n"):
+            print("\nSimulation completed!")
+            break
+
+
+if __name__ == "__main__":
+    run_robot_simulation()
